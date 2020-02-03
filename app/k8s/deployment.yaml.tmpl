@@ -1,0 +1,60 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: app1
+spec:
+# replacas: 起動するコンテナの数
+# maxSurge: アップデート時、replicas を超えて起動できるコンテナの数
+# maxUnvalidate: アップデート時、replaceas で起動したコンテナのうち、使用不能にしてよい数
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 4
+      maxUnavailable: 0
+    type: RollingUpdate
+
+  template:
+    metadata:
+      labels:
+        app: app1
+        date: "__DATE__"
+    spec:
+      containers:
+      - image: __ECR_REPOSITORY_URI__
+        imagePullPolicy: Always
+        name: app1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+## LivinessProbe
+# 概要: failureThershold 回連続で fail すると、コンテナを再起動する。
+# initialDelaySeconds コンテナが起動してこの秒数経過したらチェック開始
+# periodSeconds: 何秒ごとにチェックするか
+# timeoutSeconds: チェック時のタイムアウト秒数
+# successThreshold: 1回 fail したあと、何回連続で成功すれば「Liveness Probe が成功した」とみなすか
+# failureThreshold: 何回 fail するとコンテナを再起動するか
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+## ReadinessProbe
+# 概要: failureThershold 回連続で fail すると、クラスタからコンテナを切り離す。
+# 設定方法は LivenessProbe と同じ。
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 1
+          periodSeconds: 3
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 1

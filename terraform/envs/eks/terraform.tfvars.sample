@@ -1,0 +1,36 @@
+## profile, または access_key と secret_key、どちらかを指定する。
+aws = {
+  region = "ap-southeast-1"
+#  profile = "__AWS_DEFAULT_PROFILE__"
+#  access_key = "__AWS_ACCESS_KEY__"
+#  secret_key = "__AWS_SECRET_KEY__"
+}
+
+
+service_name = "test6"
+stage = "dev"
+
+key_pair = "__KEY_PAIR__"
+
+map_roles  = [
+/*
+  {
+    rolearn  = "arn:aws:iam::166641880000:role/sample1"
+    username = "role1"
+    groups   = ["system:masters"]
+  }
+*/
+]
+
+map_users  = [
+/*
+    {
+      userarn  = "arn:aws:iam::66666666666:user/user1"
+      username = "user1"
+      groups   = ["system:masters"]
+    },
+*/
+]
+
+map_accounts  = [
+]

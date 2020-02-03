@@ -1,0 +1,11 @@
+terraform {
+  required_version = ">= 0.12.20"
+
+  backend "s3" {
+    bucket  = "${bucket_name}"
+    key     = "${service_name}/${stage}"
+    encrypt = true
+    dynamodb_table = "${stage}-${service_name}-lock"
+    region  = "${region}"
+  }
+}

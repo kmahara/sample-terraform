@@ -1,0 +1,7 @@
+## profile, または access_key と secret_key、どちらかを指定する。
+aws = {
+  region = "ap-northeast-1"
+#  profile = "__AWS_PROFILE__"
+#  access_key = "__ACCESS_KEY__"
+#  secret_key = "__SECRET_KEY__"
+}
