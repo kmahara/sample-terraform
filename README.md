@@ -69,11 +69,8 @@ ssh ec2-user@<IP アドレス>
 make install
 ```
 
-1. app/ ディレクトリ配下に .env を配置します。
+1. app/ ディレクトリ配下に .env を配置します。  
   .env はシェルスクリプト形式のファイルで、生成された ECR リポジトリの URI などが記載されています。
-
-cp out/env.sh ../../../app/.env
-```
 
 2. ~/.kube/config を置き換えます。
 
@@ -91,6 +88,19 @@ docker-compose up
 ```
 make push
 ```
+
+このコマンドを実行すると、以下の処理が行われます。
+
+1. Docker イメージをビルドして ECR へ push。  
+  イメージのタグは最後に git commit したときの ID (ハッシュ) の先頭 7 文字です。
+  以下のコマンドの実行結果となります。
+  
+  ```
+  git rev-parse --short HEAD
+  ```
+  
+2. k83/deployment.yaml を更新します。  
+  同ディレクトリにある deployment.yaml.tmpl のベースに `__XXX__` となっている箇所を置換します。
 
 ### Kubernetes に反映する
 
