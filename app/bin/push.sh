@@ -22,7 +22,8 @@ if [ "$IMAGE_NAME" = "" ]; then
 fi
 
 
-SHORT_SHA=`git rev-parse --short HEAD`
+#SHORT_SHA=`git rev-parse --short HEAD`
+SHORT_SHA=`date "+%Y%m%d_%H%M%S"`
 
 TAG=$DOCKER_REPOSITORY_URI:$SHORT_SHA
 
@@ -50,7 +51,7 @@ docker push $TAG
 echo "## update k8s/deployment.yaml"
 echo
 
-DATE=`date "+%Y%m%d_%H%M%S"`
+DATE=`date "+%Y-%m-%d_%H:%M:%S"`
 
 sed \
 -e "s#__ECR_REPOSITORY_URI__#${TAG}#" \

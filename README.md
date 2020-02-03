@@ -92,12 +92,10 @@ make push
 このコマンドを実行すると、以下の処理が行われます。
 
 1. Docker イメージをビルドして ECR へ push。  
-  イメージのタグは最後に git commit したときの ID (ハッシュ) の先頭 7 文字です。
-  以下のコマンドの実行結果となります。
+  イメージのタグは yyyyyMMdd_HHmmss 形式になっています。
   
-  ```
-  git rev-parse --short HEAD
-  ```
+  独自のイメージタグを設定する場合、イメージタグは毎回異なるものにしてください。
+  そうしないと後述する rollout undo 機能が使用できません。
   
 2. k83/deployment.yaml を更新します。  
   同ディレクトリにある deployment.yaml.tmpl のベースに `__XXX__` となっている箇所を置換します。
@@ -112,4 +110,91 @@ make update
 
 ```
 kubectl apply -f k8s
+```
+
+ロードバランサーの URL を確認します。
+
+```
+kubectl get svc
+
+NAME         TYPE           CLUSTER-IP       EXTERNAL-IP                                                                          PORT(S)        AGE
+kubernetes   ClusterIP      10.100.0.1       <none>                                                                               443/TCP        3h35m
+service1     LoadBalancer   10.100.131.213   a80526393464c11ea857006576efaf26-90b0873a61ed8663.elb.ap-southeast-1.amazonaws.com   80:31318/TCP   133m
+```
+
+ブラウザでアクセスします。
+http://a80526393464c11ea857006576efaf26-90b0873a61ed8663.elb.ap-southeast-1.amazonaws.com/
+
+初回に kubectl apply を実行すると、ロードバランサーの作成や DNS への登録が行われ、DNS が浸透するのに数分かかります。
+上記 URL で画面が出てくるようになるまで、しばらく待ちます。
+
+### アプリケーションを修正してみる
+
+src/server.go ファイルを適当に修正してみます。
+
+```
+vi src/server.go
+```
+
+| 修正前 | fmt.Fprintln(w, "version: 1") |
+| 修正後 | fmt.Fprintln(w, "version: 2") |
+
+ECR へのアップと Kubernetes への反映を行います。
+
+```
+make push
+make update
+```
+
+ブラウザで reload すると、バージョン表示が更新されていることを確認します。
+
+### undo 実施してみる
+
+何度か Kubernetes への更新を行った後、履歴を見てみます。
+
+```
+make history
+
+REVISION  CHANGE-CAUSE
+...
+18        2020-02-03_15:31:18 166641880126.dkr.ecr.ap-southeast-1.amazonaws.com/dev-test6:6ca7fd8
+19        2020-02-03_153002 166641880126.dkr.ecr.ap-southeast-1.amazonaws.com/dev-test6:6ca7fd8
+22        2020-02-03_17:25:27 166641880126.dkr.ecr.ap-southeast-1.amazonaws.com/dev-test6:20200203_172522
+23        2020-02-03_17:25:53 166641880126.dkr.ecr.ap-southeast-1.amazonaws.com/dev-test6:20200203_172546
+```
+
+１つ前のバージョンに戻すには以下のコマンドを実行します。
+
+```
+make undo
+```
+
+このサンプルアプリケーションの場合、数秒で前のバージョンに戻ります。
+
+もう一度履歴を見てみます。
+
+```
+make history
+
+REVISION  CHANGE-CAUSE
+...
+18        2020-02-03_15:31:18 166641880126.dkr.ecr.ap-southeast-1.amazonaws.com/dev-test6:6ca7fd8
+19        2020-02-03_153002 166641880126.dkr.ecr.ap-southeast-1.amazonaws.com/dev-test6:6ca7fd8
+23        2020-02-03_17:25:53 166641880126.dkr.ecr.ap-southeast-1.amazonaws.com/dev-test6:20200203_172546
+24        2020-02-03_17:25:27 166641880126.dkr.ecr.ap-southeast-1.amazonaws.com/dev-test6:20200203_172522
+```
+
+よく見ると、今回の 23, 24 は前回の 22, 23 が入れ替わったものであることを確認できます。
+なのでこの状態で再度 undo すると、最新バージョンが再度反映されます。
+
+ということで、make undo するたびに最新バージョンと１つ前のバージョンが交互に反映されます。
+
+```
+make undo
+```
+
+レビジョンを指定して戻すこともできます。
+
+```
+kubectl rollout undo deployment app1 to-revision=19
 ```
