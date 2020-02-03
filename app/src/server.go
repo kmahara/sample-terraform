@@ -12,7 +12,7 @@ func main() {
 		fmt.Fprintf(w, "OK")
 	})
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "version: 1")
+		fmt.Fprintln(w, "version: 2")
 		fmt.Fprintln(w, "POD_NAME:" + os.Getenv("POD_NAME"))
 
 		fmt.Fprintln(w, "■Headers")
