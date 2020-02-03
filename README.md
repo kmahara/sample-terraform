@@ -58,17 +58,24 @@ ssh ec2-user@<IP アドレス>
 
 ## 生成されたファイルをもとに各種設定
 
-1. アプリケーションに対する設定
+`terraform apply` に成功すると、out ディレクトリに以下のファイルが生成されます。
+
+- kubeconfig_xxxx - kubectl 用の設定ファイル
+- env.sh - シェルスクリプト用設定ファイル
+
+このコマンドを実行すると、以下の処理が行われます。
 
 ```
+make install
+```
+
+1. app/ ディレクトリ配下に .env を配置します。
+  .env はシェルスクリプト形式のファイルで、生成された ECR リポジトリの URI などが記載されています。
+
 cp out/env.sh ../../../app/.env
 ```
 
-2. kubectl に対する設定
-
-```
-cp out/kubeconfig_dev-test6 ~/.kube/config
-```
+2. ~/.kube/config を置き換えます。
 
 ## アプリケーションをビルド＆実行する
 
