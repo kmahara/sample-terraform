@@ -97,7 +97,7 @@ make push
   独自のイメージタグを設定する場合、イメージタグは毎回異なるものにしてください。
   そうしないと後述する rollout undo 機能が使用できません。
   
-2. k83/deployment.yaml を更新します。  
+2. k8s/deployment.yaml を更新します。  
   同ディレクトリにある deployment.yaml.tmpl のベースに `__XXX__` となっている箇所を置換します。
 
 ### Kubernetes に反映する

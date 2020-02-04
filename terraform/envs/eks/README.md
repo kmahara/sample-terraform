@@ -28,11 +28,8 @@ terraform init
 terraform apply
 ```
 
-実行すると以下のファイルが生成される。
+実行すると以下のファイルが生成されます。
 
-- out/deployment.yaml
--- ../../templates/deployment.yaml をベースに生成される。
--- kubectl apply -f out/deployment.yaml のように実行すると、pod が作成される。
 - out/env.sh
 -- ../../templates/env.sh をベースに作成される。
 -- シェルでいろいろバッチ処理を行うときに使用できる。
@@ -40,26 +37,16 @@ terraform apply
 -- kubectl で今回作成した EKS クラスターに接続するために使用する。
 ```
 
-### kubeconfig の使用例
+## 自分の環境への反映
+
+以下のコマンドを実行すると、out で生成されたファイルが適切な場所へ反映されます。
 
 ```
-kubectl --kubeconfig out/kubeconfig_dev-test6 apply -f out/deployment.yaml
+make install
 ```
 
-### alias を使用すると便利
-
-```
-vi ~/.bashrc
-
-# 以下の記述を追加
-alias k='kubectl --kubeconfig terraform/out/kubeconfig_dev_test6'
-
-# 現在使用中のシェルに設定を反映
-. ~/.bashrc
-
-# 以下のように使用する。
-k apply -f out/deployemnt.yaml
-```
+1. out/env.sh が ../../../app/.env という名前でインストールされます。
+2. out/kubeconfig_* は ~/.kube/config にコピーされます。
 
 ## 確認
 
@@ -86,22 +73,6 @@ ssh -i id_rsa ec2-user@18.138.250.67
 ```
 
 ### kubectl を使う
-
-まず ~/.kube/config に EKS クラスターの設定を追加する。
-
-```
-aws eks update-kubeconfig --name クラスター名
-```
-
-複数のクラスターを管理していて切り替える場合
-
-```
-# コンテキスト一覧を表示
-kubectl config get-contexts
-
-# デフォルトで使用するコンテキストを変更する
-Kubectl config use-context arn:aws:eks:ap-southeast-1:123456789012:cluster/dev-test6
-```
 
 いろいろ実行してみる。
 
