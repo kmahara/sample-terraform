@@ -19,10 +19,10 @@ backend.tf.tmpl の {{...}} となっている箇所を置換します。
 vi terraform.tfvars
 ```
 
-| 項目 | 説明 | 例
-----
-| service_name | サービス名 | test6
-| stage | dev, stg, prd などを指定 | dev
+| 項目 | 説明 | 例 |
+----+----+----
+| service_name | サービス名 | test6 |
+| stage | dev, stg, prd などを指定 | dev |
 | key_pair | 踏み台サーバにアクセスするときの ssh 公開鍵 |
 
 ## 実行
@@ -70,8 +70,11 @@ aws ec2 describe-instances
 
 ```
 ssh ec2-user@18.138.250.67
+```
 
-# もしくは秘密鍵を明示的に指定して接続
+もしくは秘密鍵を明示的に指定して接続
+
+```
 ssh -i id_rsa ec2-user@18.138.250.67
 ```
 
