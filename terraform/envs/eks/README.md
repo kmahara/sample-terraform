@@ -9,11 +9,15 @@ AWS に以下のリソースを作成します。
 
 ## 設定方法
 
-- vi backend.tf
+```
+vi backend.tf
+```
 
 backend.tf.tmpl の {{...}} となっている箇所を置換します。
 
-- vi terraform.tfvars
+```
+vi terraform.tfvars
+```
 
 | 項目 | 説明 | 例
 ----
@@ -35,7 +39,6 @@ terraform apply
 -- シェルでいろいろバッチ処理を行うときに使用できる。
 - out/kubeconfig_dev-test6
 -- kubectl で今回作成した EKS クラスターに接続するために使用する。
-```
 
 ## 自分の環境への反映
 
