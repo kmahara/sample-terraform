@@ -20,7 +20,7 @@ vi terraform.tfvars
 ```
 
 | 項目 | 説明 | 例 |
-----+----+----
+----|----|----
 | service_name | サービス名 | test6 |
 | stage | dev, stg, prd などを指定 | dev |
 | key_pair | 踏み台サーバにアクセスするときの ssh 公開鍵 |
