@@ -203,5 +203,5 @@ make undo
 レビジョンを指定して戻すこともできます。
 
 ```
-kubectl rollout undo deployment app1 to-revision=19
+kubectl rollout undo deployment app1 --to-revision=19
 ```
